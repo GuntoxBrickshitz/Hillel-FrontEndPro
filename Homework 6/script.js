@@ -39,7 +39,7 @@ for (let i = 0; i < argCount; i++) {
 
 alert('Result: ' + argList.reduce(operList[operation]));
 
-// test commit 2
+// test commit 3
 
 
 
