@@ -9,6 +9,16 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-  <h1>Homework Number Six</h1>
+  <input type="text" id="inputCount">
+  <button id="btnSetList">Set list</button>
+  <ul id="list">
+  </ul>  
+  <button id="btnJumpTop" class="toggle-content">Back to top</button>
+  <template id = 'listTemplate'>
+    <li>{{item}}</li>
+  </template>
+  <template id = 'errorTemplate'>
+    <span class="error">{{text}}</span>
+  </template>
 </body>
 </html>
