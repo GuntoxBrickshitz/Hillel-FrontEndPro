@@ -4,11 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Homework # 8</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
 <body>
-  <h1>Homework Number Six</h1>
+  <button id="btnJumpBottom" class="toggle-content">Jump to add task</button>
+  <ul id="taskList">
+  </ul> 
+  <input type="text" id="inputTask">
+  <button id="btnAddTask">Add</button>   
+  <template id = 'taskTemplate'>
+    <li>{{text}}</li>
+  </template>
+  <template id = 'errorTemplate'>
+    <span class="error">{{text}}</span>
+  </template>
 </body>
 </html>

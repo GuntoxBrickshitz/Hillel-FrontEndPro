@@ -1,45 +1,80 @@
 'use strict';
 
-const operList = {
-  add: function (acc, item) { return acc + item; },
-  sub: function (acc, item) { return acc - item; },
-  mult: function (acc, item) { return acc * item; },
-  div: function (acc, item) { return acc / item; },
+const inputTask = document.querySelector('#inputTask');
+const buttonAddTask = document.querySelector('#btnAddTask');
+
+const taskList = document.querySelector('#taskList');
+const listTemplate = document.querySelector('#listTemplate').innerHTML;
+const errorTemplate = document.querySelector('#errorTemplate').innerHTML;
+
+const buttonBottom = document.querySelector('#btnJumpBottom');
+const showJumpTopOver = 48;
+
+buttonAddTask.addEventListener('click', onbtnAddTask);
+buttonBottom.addEventListener('click', onBtnBottom);
+
+function onbtnAddTask() {
+  checkInput();  
+  addTask();
+  focusInput();
 }
 
-let operText = '';
-let operation;
-let argCount;
-let some;
-let value;
-let argList = [];
-
-for (let key in operList) {
-  operText += key + ' ';
+function onBtnBottom() {
+  focusInput();
 }
 
-do {
-  operation = prompt('Enter operation: ' + operText);
+function clearList() {
+  taskList.innerHTML = '';
 }
-while ( !(operation in operList) );
 
-do {
-  argCount = Number(prompt('Enter parameters count [1 to 4]: '));
-}
-while (isNaN(argCount) || !Number.isInteger(argCount) || argCount < 1 || argCount > 4);
+function setList() {
+  let count = Number(inputTask.value);
 
-for (let i = 0; i < argCount; i++) {  
-  do {
-    value = Number(prompt('Enter parameter: '));
+  if (checkCount(count)) {
+    appendList(count);
   }
-  while (isNaN(value));
-
-  argList.push(value);
+  else {
+    showCountError();
+  }  
 }
 
-alert('Result: ' + argList.reduce(operList[operation]));
+function checkCount(value) {  
+  return !isNaN(value) && Number.isInteger(value) && value > 0;
+}
 
-// test commit
+function appendList(count) {
+  let listHtml = '';
 
+  for (let i = 0; i < count; i++) {
+    listHtml += listTemplate.replace('{{item}}', i + 1);
+  }
 
+  taskList.innerHTML = listHtml;
 
+  showJumpTop(count);  
+}
+
+function showJumpTop(count) {
+  if (count > showJumpTopOver) {
+    showElement(buttonBottom);
+  }
+  else {
+    hideElement(buttonBottom);
+  }  
+}
+
+function showElement(element) {
+  element.classList.add('is-visible');
+}
+
+function hideElement(element) {
+  element.classList.remove('is-visible');
+}
+
+function showCountError() {
+  list.innerHTML = errorTemplate.replace('{{text}}','Entered value is not valid');
+}
+
+function focusInput() {
+  inputTask.focus();
+}
