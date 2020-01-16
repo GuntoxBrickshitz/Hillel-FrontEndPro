@@ -1,16 +1,25 @@
-h1 {
-    color: green;
-}
-
-.error {
-    color: red;
+.del-btn {
     font-weight: bold;
+    float: right;
 }
 
-.toggle-content {
-	display: none;
+.todo-item {
+    font-weight: bold;
+    color: black;
+    background-color: yellow;
+    border: 1px grey;
+    padding: 5 px;    
 }
 
-.toggle-content.is-visible {
-	display: block;
+.todo-item.is-done {
+    font-weight: normal;
+    color: darkgrey;
+    background-color: lightgreen;
+}
+
+.full-width {
+    width: 100%;
+    max-width: 100%;
+    clear: both;
+    margin: 0 auto;
 }

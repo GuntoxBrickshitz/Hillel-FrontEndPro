@@ -1,34 +1,34 @@
 'use strict';
 
-const inputCount = document.querySelector('#inputCount');
-const buttonSetList = document.querySelector('#btnSetList');
+const inputTask = document.querySelector('#inputTask');
+const buttonAddTask = document.querySelector('#btnAddTask');
 
-const list = document.querySelector('#list');
+const taskList = document.querySelector('#taskList');
 const listTemplate = document.querySelector('#listTemplate').innerHTML;
 const errorTemplate = document.querySelector('#errorTemplate').innerHTML;
 
-const buttonTop = document.querySelector('#btnJumpTop');
+const buttonBottom = document.querySelector('#btnJumpBottom');
 const showJumpTopOver = 48;
 
-buttonSetList.addEventListener('click', onBtnSetList);
-buttonTop.addEventListener('click', onBtnTop);
+buttonAddTask.addEventListener('click', onbtnAddTask);
+buttonBottom.addEventListener('click', onBtnBottom);
 
-function onBtnSetList() {
-  clearList();
-  setList();  
-  setOnInput();
+function onbtnAddTask() {
+  checkInput();  
+  addTask();
+  focusInput();
 }
 
-function onBtnTop() {
-  setOnInput();
+function onBtnBottom() {
+  focusInput();
 }
 
 function clearList() {
-  list.innerHTML = '';
+  taskList.innerHTML = '';
 }
 
 function setList() {
-  const count = Number(inputCount.value);
+  let count = Number(inputTask.value);
 
   if (checkCount(count)) {
     appendList(count);
@@ -49,17 +49,17 @@ function appendList(count) {
     listHtml += listTemplate.replace('{{item}}', i + 1);
   }
 
-  list.innerHTML = listHtml;
+  taskList.innerHTML = listHtml;
 
   showJumpTop(count);  
 }
 
 function showJumpTop(count) {
   if (count > showJumpTopOver) {
-    showElement(buttonTop);
+    showElement(buttonBottom);
   }
   else {
-    hideElement(buttonTop);
+    hideElement(buttonBottom);
   }  
 }
 
@@ -75,7 +75,6 @@ function showCountError() {
   list.innerHTML = errorTemplate.replace('{{text}}','Entered value is not valid');
 }
 
-function setOnInput() {
-  inputCount.innerHTML = '';
-  inputCount.focus();
+function focusInput() {
+  inputTask.focus();
 }

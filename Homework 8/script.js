@@ -1,80 +1,62 @@
 'use strict';
 
 const inputTask = document.querySelector('#inputTask');
-const buttonAddTask = document.querySelector('#btnAddTask');
+const addTaskForm = document.querySelector('#addTaskForm');
 
 const taskList = document.querySelector('#taskList');
-const listTemplate = document.querySelector('#listTemplate').innerHTML;
-const errorTemplate = document.querySelector('#errorTemplate').innerHTML;
+const taskTemplate = document.querySelector('#taskTemplate').innerHTML;
 
-const buttonBottom = document.querySelector('#btnJumpBottom');
-const showJumpTopOver = 48;
+addTaskForm.addEventListener('submit', onSubmitAddTask);
+taskList.addEventListener('click', onClickListItem);
 
-buttonAddTask.addEventListener('click', onbtnAddTask);
-buttonBottom.addEventListener('click', onBtnBottom);
-
-function onbtnAddTask() {
-  checkInput();  
-  addTask();
-  focusInput();
+function onSubmitAddTask(event) {
+  event.preventDefault();
+  
+  processInput(); 
 }
 
-function onBtnBottom() {
-  focusInput();
-}
-
-function clearList() {
-  taskList.innerHTML = '';
-}
-
-function setList() {
-  let count = Number(inputTask.value);
-
-  if (checkCount(count)) {
-    appendList(count);
-  }
-  else {
-    showCountError();
-  }  
-}
-
-function checkCount(value) {  
-  return !isNaN(value) && Number.isInteger(value) && value > 0;
-}
-
-function appendList(count) {
-  let listHtml = '';
-
-  for (let i = 0; i < count; i++) {
-    listHtml += listTemplate.replace('{{item}}', i + 1);
+function processInput() {
+  const task = {
+    text: inputTask.value
   }
 
-  taskList.innerHTML = listHtml;
-
-  showJumpTop(count);  
-}
-
-function showJumpTop(count) {
-  if (count > showJumpTopOver) {
-    showElement(buttonBottom);
+  if (checkValue(task.text)) {
+    addTask(task);
   }
-  else {
-    hideElement(buttonBottom);
-  }  
+
+  setOnInput();
 }
 
-function showElement(element) {
-  element.classList.add('is-visible');
+function checkValue(value) {
+  return value != '';
 }
 
-function hideElement(element) {
-  element.classList.remove('is-visible');
+function addTask(task) {  
+  const taskItem = taskTemplate.replace('{{text}}', task.text);
+  taskList.innerHTML += taskItem;
 }
 
-function showCountError() {
-  list.innerHTML = errorTemplate.replace('{{text}}','Entered value is not valid');
+function onClickListItem(event) {  
+  const itemClass = event.target.classList;
+
+  if (itemClass.contains('del-btn')) {
+    removeItem(event.target.parentNode);
+  }
+  else
+  if (itemClass.contains('todo-item')) {
+    toggleItem(itemClass);
+  }
 }
 
-function focusInput() {
+function removeItem(element) {
+  element.remove();
+}
+
+function toggleItem(elementClass){
+  elementClass.toggle('is-done');
+}
+
+function setOnInput() {
+  inputTask.value = '';
   inputTask.focus();
 }
