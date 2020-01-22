@@ -1,80 +1,87 @@
 'use strict';
 
-const inputTask = document.querySelector('#inputTask');
-const buttonAddTask = document.querySelector('#btnAddTask');
+// <td><button type="button" class="del-button">Delete</button></td>
 
-const taskList = document.querySelector('#taskList');
-const listTemplate = document.querySelector('#listTemplate').innerHTML;
-const errorTemplate = document.querySelector('#errorTemplate').innerHTML;
+const contactsForm = document.querySelector('#contactsForm');
+const contactsList = document.querySelector('#contactsList');
+const contactTemplate = document.querySelector('#contactTemplate').innerHTML;
+const btnAddContact = document.querySelector('#buttonAddContact');
 
-const buttonBottom = document.querySelector('#btnJumpBottom');
-const showJumpTopOver = 48;
+const inputFirstName = document.querySelector('#inputFirstName');
+const inputLastName = document.querySelector('#inputLastName');
+const inputPhoneNumber = document.querySelector('#inputPhoneNumber');
 
-buttonAddTask.addEventListener('click', onbtnAddTask);
-buttonBottom.addEventListener('click', onBtnBottom);
+btnAddContact.addEventListener('click', onSubmitBtnAddContact);
+contactsList.addEventListener('click', onClickContactsList);
+contactsForm.addEventListener('focus', onFocusInput, true);
+contactsForm.addEventListener('blur', onBlurInput, true);
 
-function onbtnAddTask() {
-  checkInput();  
-  addTask();
-  focusInput();
+function onSubmitBtnAddContact(event) {    
+  event.preventDefault(); 
+  requestAddContact();  
 }
 
-function onBtnBottom() {
-  focusInput();
-}
+function requestAddContact() {
+  let contact = checkInputs();
 
-function clearList() {
-  taskList.innerHTML = '';
-}
-
-function setList() {
-  let count = Number(inputTask.value);
-
-  if (checkCount(count)) {
-    appendList(count);
+  if (contact != null) {
+    addContact(contact);
   }
-  else {
-    showCountError();
+}
+
+function checkInputs() {
+  let contactItem = {
+    firstName: inputFirstName.value,
+    lastName: inputLastName.value,
+    phoneNumber: inputPhoneNumber.value
+  }
+
+  for (let key in contactItem) {    
+    if (!checkInputValue(contactItem[key])){
+      return null;
+    }
+  }
+
+  return contactItem;
+}
+
+function checkInputValue(value) {
+  console.log(value);
+  return !!value.trim();
+}
+
+function addContact(contact) {
+  const newContactRow = document.createElement('tr');
+  newContactRow.className = 'contact-element';
+
+  newContactRow.innerHTML = contactTemplate
+    .replace('{{firstName}}', contact.firstName)
+    .replace('{{lastName}}', contact.lastName)
+    .replace('{{phoneNumber}}', contact.phoneNumber);
+
+  contactsList.appendChild(newContactRow);
+}
+
+function onClickContactsList(event) {
+  if (event.target.classList.contains('contact-action')) {
+    deleteContact(event.target.closest('.contact-element'));      
+  }
+}
+
+function deleteContact(contactElement) {
+  contactElement.remove();
+}
+
+function onFocusInput(event) {
+  event.target.classList.remove('error');
+}
+
+function onBlurInput(event) {
+  if (!checkInputValue(event.target.value)) {
+    event.target.classList.add('error');  
   }  
 }
 
-function checkCount(value) {  
-  return !isNaN(value) && Number.isInteger(value) && value > 0;
-}
 
-function appendList(count) {
-  let listHtml = '';
 
-  for (let i = 0; i < count; i++) {
-    listHtml += listTemplate.replace('{{item}}', i + 1);
-  }
 
-  taskList.innerHTML = listHtml;
-
-  showJumpTop(count);  
-}
-
-function showJumpTop(count) {
-  if (count > showJumpTopOver) {
-    showElement(buttonBottom);
-  }
-  else {
-    hideElement(buttonBottom);
-  }  
-}
-
-function showElement(element) {
-  element.classList.add('is-visible');
-}
-
-function hideElement(element) {
-  element.classList.remove('is-visible');
-}
-
-function showCountError() {
-  list.innerHTML = errorTemplate.replace('{{text}}','Entered value is not valid');
-}
-
-function focusInput() {
-  inputTask.focus();
-}

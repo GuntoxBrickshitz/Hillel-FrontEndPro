@@ -2,15 +2,10 @@ h1 {
     color: green;
 }
 
-.error {
-    color: red;
-    font-weight: bold;
+.table-footer {
+    text-align: center;
 }
 
-.toggle-content {
-	display: none;
-}
-
-.toggle-content.is-visible {
-	display: block;
+.input.error {
+    border-color: red;
 }
