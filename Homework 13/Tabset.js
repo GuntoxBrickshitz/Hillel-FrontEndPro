@@ -1,82 +1,123 @@
 class Tabset {
-    constructor(elementId, config) {
+    constructor(elementId, selectedTabIndex, config, ) {
         this.config = config || {
+            hideAll: true
         };
 
         this.el = document.getElementById(elementId);
+        this.selectedTabIndex = selectedTabIndex;
 
         this.init();
     }
 
     static TABSET_CLASS = 'tabset';
     static TABSET_HEADER_CLASS = 'tabset-header';
+    static TABSET_TITLE_CLASS = 'tabset-title';
+    static TABSET_CONTENT_CLASS = 'tabset-content';
+    static TABSET_BUTTON_CLASS = 'tabset-button';    
     static TABSET_ITEM_TITLE_CLASS = 'tabset-item-title';
-    static TABSET_ITEM_BUTTON_CLASS = 'tabset-item-button';
     static TABSET_ITEM_CONTENT_CLASS = 'tabset-item-content';
-    static TABSET_ITEM_BUTTON1_ID = 'buttonLeft';
+    static TABSET_ITEM_NAME = 'tabset-item-';
+    static TABSET_ITEM_BUTTON1_ID = 'btnSwitchTabLeft';
     static TABSET_ITEM_BUTTON1_LABEL = '<';
-    static TABSET_ITEM_BUTTON2_ID = 'buttonRight';
+    static TABSET_ITEM_BUTTON2_ID = 'btnSwitchTabRight';
     static TABSET_ITEM_BUTTON2_LABEL = '>';
     static ACTIVE_ITEM_CLASS = 'active';
 
     init() {
         this.formatDivs();
-        // this.bindClasses();
+        this.createButtons();
+        this.bindClasses();
         this.bindCallbacks();        
     }
 
     formatDivs() {
-        const tabsCount = this.el.children.length;
-        this.divHeader = this.createDiv(this.el, '', Tabset.TABSET_HEADER_CLASS);
-        this.divTitles = this.createDiv(this.divHeader, '', Tabset.TABSET_ITEM_TITLE_CLASS);
-        this.divButtons = this.createDiv(this.divHeader, '', Tabset.TABSET_ITEM_BUTTON_CLASS);
-        this.divContent = this.createDiv(this.el, '', Tabset.TABSET_ITEM_CONTENT_CLASS);
+        this.maxTabIndex = this.el.children.length;
+        this.divHeader = this.createDiv(this.el, Tabset.TABSET_HEADER_CLASS);
+        this.divTitles = this.createDiv(this.divHeader, Tabset.TABSET_TITLE_CLASS);
+        this.divButtons = this.createDiv(this.divHeader, Tabset.TABSET_BUTTON_CLASS);
+        this.divContent = this.createDiv(this.el, Tabset.TABSET_CONTENT_CLASS);
 
-        for (let i = 0; i < tabsCount; i++) {    
-            let divTab = this.el.children[0];
-            this.divTitles.append(divTab.children[0]);
-            this.divContent.append(divTab.children[0]);    
+        for (let i = 0; i < this.maxTabIndex; i++) {
+            const divTab = this.el.children[0];            
+            const tabItemName = Tabset.TABSET_ITEM_NAME + i;
+            this.moveElement(divTab.children[0], this.divTitles, tabItemName);
+            this.moveElement(divTab.children[0], this.divContent, tabItemName);
             divTab.remove();
         }
 
-        this.buttonLeft = this.createButton(this.divButtons,Tabset.TABSET_ITEM_BUTTON1_LABEL, Tabset.TABSET_ITEM_BUTTON1_ID);
-        this.buttonRight = this.createButton(this.divButtons,Tabset.TABSET_ITEM_BUTTON2_LABEL, Tabset.TABSET_ITEM_BUTTON2_ID);
-
-        this.show(this.divContent.children[0]);
+        this.showInnerIndex();
     }
 
-    createDiv(parent, content, className) {
-        const divNew = document.createElement('div');
-        divNew.innerHTML = content || '';
+    createDiv(parent, className) {
+        const divNew = document.createElement('div');       
     
-        if (!!className) { divNew.className = className; }
-    
+        if (!!className) { divNew.className = className; }    
         parent.append(divNew);
     
         return divNew;
     }
 
-    createButton(parent, label, id) {
+    moveElement(element, destination, newElementName) {
+        if (!!newElementName) { element.setAttribute('name', newElementName); }
+        destination.append(element);
+    }
+
+    createButtons() {
+        this.buttonLeft = this.createTabButton(
+            Tabset.TABSET_ITEM_BUTTON1_LABEL,
+            Tabset.TABSET_ITEM_BUTTON1_ID
+        );
+        
+        this.buttonLeft.addEventListener('click', this.prevTab());
+
+        this.buttonRight = this.createTabButton(
+            Tabset.TABSET_ITEM_BUTTON2_LABEL,
+            Tabset.TABSET_ITEM_BUTTON2_ID
+        );
+
+        this.buttonRight.addEventListener('click', this.nextTab());
+    }
+
+    createTabButton(label, id) {
         const buttonNew = document.createElement('button');
         buttonNew.innerHTML = label || '';
     
         if (!!id) { buttonNew.id = id; }
     
-        parent.append(buttonNew);
+        this.divButtons.append(buttonNew);
     
         return buttonNew;
     }
 
+    prevTab() {
+        if (this.selectedTabIndex > 0) {
+            this.selectedTabIndex--;
+        }
+        else {
+            this.selectedTabIndex = this.maxTabIndex;
+        }
+        this.showInnerIndex();
+    }
+
+    nextTab() {
+        if (this.selectedTabIndex < this.maxTabIndex) {
+            this.selectedTabIndex++;
+        }
+        else {
+            this.selectedTabIndex = 0;
+        }
+        this.showInnerIndex();
+    }
+
     bindClasses() {
-        // this.el.classList.add(Tabset.TABSET_CLASS);
-        Array.prototype.forEach.call(this.divTitles.children, itemEl => {
-            itemEl.classList.add(Tabset.TABSET_ITEM_CLASS);
-            itemEl.children[0].classList.add(
-                Tabset.TABSET_ITEM_TITLE_CLASS
-            );
-            itemEl.children[1].classList.add(
-                Tabset.TABSET_ITEM_CONTENT_CLASS
-            );
+        this.bindClass(this.divTitles.children, Tabset.TABSET_ITEM_TITLE_CLASS);
+        this.bindClass(this.divContent.children, Tabset.TABSET_ITEM_CONTENT_CLASS);   
+    }
+
+    bindClass(elements, className) {
+        Array.prototype.forEach.call(elements, itemEl => {
+            itemEl.classList.add(className);
         });
     }
 
@@ -85,29 +126,24 @@ class Tabset {
     }
 
     onTabsetClick(e) {
+        const clickedItem = e.target;
+
         switch (true) {
-            case e.target.classList.contains(
-                Tabset.TABSET_ITEM_TITLE_CLASS
-            ):
-                this.onTitleClick(e.target);
+            case e.target.parentNode.classList.contains(Tabset.TABSET_TITLE_CLASS)
+            && !this.isVisible(clickedItem):
+                this.onTitleClick(clickedItem);
                 break;
         }
     }
 
-    onTitleClick(titleElem) {
-        const itemElem = titleElem.parentNode;
-        const isCurrentVisible = this.isVisible(itemElem);
+    onTitleClick(titleElem) {              
+        const tabName = titleElem.getAttribute('name');
 
         if (this.config.hideAll) {
-            this.hideAll();
+            this.hideByClass(Tabset.ACTIVE_ITEM_CLASS);
         }
 
-        if (!isCurrentVisible) {
-            this.show(itemElem);
-        }
-        else {
-            this.hide(itemElem);
-        }
+        this.showByName(tabName);
     }
 
     show(itemElem) {
@@ -122,19 +158,35 @@ class Tabset {
         return itemElem.classList.contains(Tabset.ACTIVE_ITEM_CLASS);
     }
 
-    hideAll() {
-        const visibleElements = this.el.querySelectorAll(
-            '.' + Tabset.ACTIVE_ITEM_CLASS
-        );
+    showByName(nameValue) {
+        const selectedElements = this.el.querySelectorAll('[name=' + nameValue + ']');
+        this.applyToElements(selectedElements, this.show.bind(this));        
+    }
 
-        Array.prototype.forEach.call(visibleElements, this.hide.bind(this));
+    hideByName(nameValue) {
+        const selectedElements = this.el.querySelectorAll('[name=' + nameValue + ']');
+
+        this.applyToElements(selectedElements, this.hide.bind(this));        
+    }
+
+    hideByClass(className) {
+        const selectedElements = this.el.querySelectorAll('.' + className);
+
+        this.applyToElements(selectedElements, this.hide.bind(this));        
+    }
+
+    applyToElements(elements, funcToApply) {
+        Array.prototype.forEach.call(elements, funcToApply);
     }
 
     showIndex(index) {        
-        this.show(this.el.children[index]);
+        this.selectedTabIndex = index;
+        this.showInnerIndex();
     }
 
-    hideIndex(index) {
-        this.hide(this.el.children[index]);
+    showInnerIndex() {
+        const tabName = Tabset.TABSET_ITEM_NAME + this.selectedTabIndex;
+        this.hideByClass(Tabset.ACTIVE_ITEM_CLASS);        
+        this.showByName(tabName);
     }
 }

@@ -2,6 +2,44 @@
     display: none;
 }
 
-.active .tabset-item-content {
+.tabset-item-content.active {
+    width: 100%;
+    margin-top: -1px;
+    padding: 1em;
+    border: 1px solid #ddd;    
+    order: 1;
+}
+
+.tabset-title {
+    display: flex;
+}
+
+.tabset-item-title {
+    background: #eee; 
+    border: 1px solid #ddd; 
+    padding: .7em 1em;
+    cursor: pointer;
+    z-index: 1;
+    margin-left: -1px;
+}
+
+.tabset-item-title {
+    background: #eee; 
+    border: 1px solid #ddd; 
+    padding: .7em 1em;
+    cursor: pointer;
+    z-index: 1;
+    margin-left: -1px;
+}
+
+.tabset-item-title.active {
+    background: #dee;
+}
+
+.active {
     display: block;
+}
+
+.tabset-header {
+    display: flex;
 }
