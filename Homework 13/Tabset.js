@@ -1,8 +1,6 @@
 class Tabset {
-    constructor(elementId, selectedTabIndex, config, ) {
-        this.config = config || {
-            hideAll: true
-        };
+    constructor(elementId, selectedTabIndex, config) {
+        this.config = config || {};
 
         this.el = document.getElementById(elementId);
         this.selectedTabIndex = selectedTabIndex;
@@ -10,43 +8,41 @@ class Tabset {
         this.init();
     }
 
-    static TABSET_CLASS = 'tabset';
-    static TABSET_HEADER_CLASS = 'tabset-header';
-    static TABSET_TITLE_CLASS = 'tabset-title';
-    static TABSET_CONTENT_CLASS = 'tabset-content';
-    static TABSET_BUTTON_CLASS = 'tabset-button';    
-    static TABSET_ITEM_TITLE_CLASS = 'tabset-item-title';
-    static TABSET_ITEM_CONTENT_CLASS = 'tabset-item-content';
-    static TABSET_ITEM_NAME = 'tabset-item-';
-    static TABSET_ITEM_BUTTON1_ID = 'btnSwitchTabLeft';
-    static TABSET_ITEM_BUTTON1_LABEL = '<';
-    static TABSET_ITEM_BUTTON2_ID = 'btnSwitchTabRight';
-    static TABSET_ITEM_BUTTON2_LABEL = '>';
+    static HEADER_CLASS = 'tabset-header';
+    static TITLE_CLASS = 'tabset-title';
+    static CONTENT_CLASS = 'tabset-content';
+    static BUTTON_CLASS = 'tabset-button';    
+    static ITEM_TITLE_CLASS = 'tabset-item-title';
+    static ITEM_CONTENT_CLASS = 'tabset-item-content';
+    static ITEM_NAME = 'tabset-item-';
+    static BUTTON_RIGHT_ID = 'btnSwitchTabLeft';
+    static BUTTON_RIGHT_LABEL = '<';
+    static BUTTON_LEFT_ID = 'btnSwitchTabRight';
+    static BUTTON_LEFT_LABEL = '>';
     static ACTIVE_ITEM_CLASS = 'active';
 
     init() {
         this.formatDivs();
         this.createButtons();
         this.bindClasses();
-        this.bindCallbacks();        
+        this.bindCallbacks();
+        this.showCurrentIndex();       
     }
 
     formatDivs() {
         this.maxTabIndex = this.el.children.length;
-        this.divHeader = this.createDiv(this.el, Tabset.TABSET_HEADER_CLASS);
-        this.divTitles = this.createDiv(this.divHeader, Tabset.TABSET_TITLE_CLASS);
-        this.divButtons = this.createDiv(this.divHeader, Tabset.TABSET_BUTTON_CLASS);
-        this.divContent = this.createDiv(this.el, Tabset.TABSET_CONTENT_CLASS);
+        this.divHeader = this.createDiv(this.el, Tabset.HEADER_CLASS);
+        this.divTitles = this.createDiv(this.divHeader, Tabset.TITLE_CLASS);
+        this.divButtons = this.createDiv(this.divHeader, Tabset.BUTTON_CLASS);
+        this.divContent = this.createDiv(this.el, Tabset.CONTENT_CLASS);
 
         for (let i = 0; i < this.maxTabIndex; i++) {
             const divTab = this.el.children[0];            
-            const tabItemName = Tabset.TABSET_ITEM_NAME + i;
+            const tabItemName = Tabset.ITEM_NAME + (i + 1);
             this.moveElement(divTab.children[0], this.divTitles, tabItemName);
             this.moveElement(divTab.children[0], this.divContent, tabItemName);
             divTab.remove();
-        }
-
-        this.showInnerIndex();
+        }       
     }
 
     createDiv(parent, className) {
@@ -65,18 +61,14 @@ class Tabset {
 
     createButtons() {
         this.buttonLeft = this.createTabButton(
-            Tabset.TABSET_ITEM_BUTTON1_LABEL,
-            Tabset.TABSET_ITEM_BUTTON1_ID
+            Tabset.BUTTON_RIGHT_LABEL,
+            Tabset.BUTTON_RIGHT_ID
         );
-        
-        this.buttonLeft.addEventListener('click', this.prevTab());
 
         this.buttonRight = this.createTabButton(
-            Tabset.TABSET_ITEM_BUTTON2_LABEL,
-            Tabset.TABSET_ITEM_BUTTON2_ID
+            Tabset.BUTTON_LEFT_LABEL,
+            Tabset.BUTTON_LEFT_ID
         );
-
-        this.buttonRight.addEventListener('click', this.nextTab());
     }
 
     createTabButton(label, id) {
@@ -91,13 +83,13 @@ class Tabset {
     }
 
     prevTab() {
-        if (this.selectedTabIndex > 0) {
+        if (this.selectedTabIndex > 1) {
             this.selectedTabIndex--;
         }
         else {
             this.selectedTabIndex = this.maxTabIndex;
         }
-        this.showInnerIndex();
+        this.showCurrentIndex();
     }
 
     nextTab() {
@@ -105,14 +97,14 @@ class Tabset {
             this.selectedTabIndex++;
         }
         else {
-            this.selectedTabIndex = 0;
+            this.selectedTabIndex = 1;
         }
-        this.showInnerIndex();
+        this.showCurrentIndex();
     }
 
     bindClasses() {
-        this.bindClass(this.divTitles.children, Tabset.TABSET_ITEM_TITLE_CLASS);
-        this.bindClass(this.divContent.children, Tabset.TABSET_ITEM_CONTENT_CLASS);   
+        this.bindClass(this.divTitles.children, Tabset.ITEM_TITLE_CLASS);
+        this.bindClass(this.divContent.children, Tabset.ITEM_CONTENT_CLASS);   
     }
 
     bindClass(elements, className) {
@@ -126,23 +118,28 @@ class Tabset {
     }
 
     onTabsetClick(e) {
-        const clickedItem = e.target;
+        const clickedItem = e.target;    
 
-        switch (true) {
-            case e.target.parentNode.classList.contains(Tabset.TABSET_TITLE_CLASS)
+        switch (true) {            
+            case clickedItem.parentNode.classList.contains(Tabset.TITLE_CLASS)
             && !this.isVisible(clickedItem):
                 this.onTitleClick(clickedItem);
                 break;
+            default:
+                switch (clickedItem.id) {
+                    case Tabset.BUTTON_RIGHT_ID:
+                        this.prevTab();
+                        break;
+                    case Tabset.BUTTON_LEFT_ID:
+                        this.nextTab();
+                        break;
+                }            
         }
     }
 
     onTitleClick(titleElem) {              
         const tabName = titleElem.getAttribute('name');
-
-        if (this.config.hideAll) {
-            this.hideByClass(Tabset.ACTIVE_ITEM_CLASS);
-        }
-
+        this.hideByClass(Tabset.ACTIVE_ITEM_CLASS);
         this.showByName(tabName);
     }
 
@@ -165,13 +162,11 @@ class Tabset {
 
     hideByName(nameValue) {
         const selectedElements = this.el.querySelectorAll('[name=' + nameValue + ']');
-
         this.applyToElements(selectedElements, this.hide.bind(this));        
     }
 
     hideByClass(className) {
         const selectedElements = this.el.querySelectorAll('.' + className);
-
         this.applyToElements(selectedElements, this.hide.bind(this));        
     }
 
@@ -181,11 +176,11 @@ class Tabset {
 
     showIndex(index) {        
         this.selectedTabIndex = index;
-        this.showInnerIndex();
+        this.showCurrentIndex();
     }
 
-    showInnerIndex() {
-        const tabName = Tabset.TABSET_ITEM_NAME + this.selectedTabIndex;
+    showCurrentIndex() {
+        const tabName = Tabset.ITEM_NAME + this.selectedTabIndex;
         this.hideByClass(Tabset.ACTIVE_ITEM_CLASS);        
         this.showByName(tabName);
     }
