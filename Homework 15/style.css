@@ -2,7 +2,14 @@
     display: flex;
 }
 
-.list-item {
+.full-width {
+    width: 100%;
+    max-width: 100%;
+    clear: both;
+    margin: 0 auto;
+}
+
+.albums-list-item {
     font-weight: bold;
     color: black;
     background-color: rgb(209, 209, 170);
@@ -14,11 +21,4 @@
     font-weight: normal;
     color: rgb(197, 231, 102);
     background-color: rgb(110, 140, 187);
-}
-
-.full-width {
-    width: 100%;
-    max-width: 100%;
-    clear: both;
-    margin: 0 auto;
 }

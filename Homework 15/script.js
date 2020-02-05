@@ -1,24 +1,36 @@
 'use strict';
 
-const CLASS_LIST_ITEM = 'list-item';
+const CLASS_ALBUMS_ITEM = 'albums-list-item';
+const CLASS_PHOTOS_ITEM = 'photos-list-item';
 const CLASS_ITEM_SELECTED = 'selected';
-const WAIT_MESSAGE = 'please wait, requesting url ';
-const CONNECTION_ERROR = 'failed request to url ';
+const ALBUMS_LIST_URL = 'https://jsonplaceholder.typicode.com/albums';
+const PHOTOS_LIST_URL = 'https://jsonplaceholder.typicode.com/photos?albumId=';
+const WAIT_MESSAGE = 'please wait, requesting url';
+const REQUEST_ERROR = 'failed request to url';
 
 const albumsList = document.querySelector('#albumsList');
 const photosList = document.querySelector('#photosList');
-const listItemTemplate = document.querySelector('#listItemTemplate').innerHTML;
+const albumItemTemplate = document.querySelector('#albumItemTemplate').innerHTML;
+const photosItemTemplate = document.querySelector('#photosItemTemplate').innerHTML;
+
 let selectedAlbumId = null;
 
+getAlbumsFromServer(ALBUMS_LIST_URL);
 albumsList.addEventListener('click', onClickListItem);
 
-fetch('https://jsonplaceholder.typicode.com/albums')
-.then(response => {  
-  return response.json();
-})
-.then(showAlbumsList);
+function getAlbumsFromServer(url) {
+  showTextMessage(albumsList, WAIT_MESSAGE, url);
+
+  fetch(url)
+  .then(response => {  
+    return response.json();
+  })
+  .then(showAlbumsList)
+  .catch(response => showTextMessage(albumsList, REQUEST_ERROR, url));
+}
 
 function showAlbumsList(listFromServer) {
+  albumsList.innerHTML = "";
   listFromServer.forEach(convertAlbumsFromServer);
 }
 
@@ -31,8 +43,8 @@ function convertAlbumsFromServer(listElement) {
 }
 
 function addAlbum(album) {  
-  const listItemHtml = listItemTemplate
-    .replace('{{class}}', CLASS_LIST_ITEM)
+  const listItemHtml = albumItemTemplate
+    .replace('{{class}}', CLASS_ALBUMS_ITEM)
     .replace('{{id}}', album.id)
     .replace('{{text}}', album.text);
   const listItemElement = htmlToElement(listItemHtml);
@@ -61,7 +73,6 @@ function isSelected(elementClassList) {
 }
 
 function onSelectAlbum(itemId, itemClass) {
-  //const albumId = itemId.getAttribute('id').slice(6);
   deselectPrevItem();
   selectItem(itemId, itemClass);
   showAlbumContent();
@@ -81,35 +92,48 @@ function selectItem(itemId, itemClass) {
 
 function showAlbumContent() {
   const albumId = selectedAlbumId.slice(6);
-  const albumUrl = 'https://jsonplaceholder.typicode.com/photos?albumId=' + albumId;
-  
-  showWaitMessage(albumUrl);
+  const albumUrl = PHOTOS_LIST_URL + albumId;
+  getPhotosFromServer(albumUrl);
+}
+
+function showTextMessage(parent, ...params) {
+  const message = params.reduce((acc, item) => acc + ' ' + item);
+  parent.innerHTML = message;
+  console.log(message);  
+}
+
+function getPhotosFromServer(albumUrl) {
+  showTextMessage(photosList, WAIT_MESSAGE, albumUrl);
 
   fetch(albumUrl)
   .then(response => {  
     return response.json();
   })
   .then(showPhotosList)
-  .catch(response => showConnectionError(albumUrl));
-}
-
-function showWaitMessage(url) {
-  const message = WAIT_MESSAGE + url;
-  photosList.innerHTML = message;
-  console.log(message);  
+  .catch(response => showTextMessage(photosList, REQUEST_ERROR, albumUrl));
 }
 
 function showPhotosList(listFromServer) {
+  photosList.innerHTML = "";
   listFromServer.forEach(convertPhotosFromServer);
 }
 
 function convertPhotosFromServer(listElement) {
-  console.log(listElement);
+  const photo = {
+    id: listElement.id,
+    url: listElement.url,    
+    title: listElement.title
+  }
+  addPhoto(photo);
 }
 
-function showConnectionError(url) {
-  const message = CONNECTION_ERROR + url;  
-  photosList.innerHTML = message;
-  console.log(message);  
+function addPhoto(photo) {  
+  const listItemHtml = photosItemTemplate
+    .replace('{{class}}', CLASS_PHOTOS_ITEM)
+    .replace('{{url}}', photo.url)
+    .replace('{{title}}', photo.title);
+  const listItemElement = htmlToElement(listItemHtml);
+
+  photosList.appendChild(listItemElement);
 }
 
