@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Homework # 16</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+  <form id="usersForm">
+    <table class="full-width-container">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Action</th>                              
+        </tr>
+      </thead>
+
+      <tbody id="usersList">
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <td>
+            <input type="text" name="name-add" id="inputFirstName" class="user-input">
+          </td>        
+          <td>
+            <input type="text" name="surname-add" id="inputLastName" class="user-input">
+          </td>        
+          <td>
+            <input type="text" name="email-add" id="inputEmail" class="user-input">
+          </td>
+          <td>
+            <button id="buttonAddUser">Add</button>
+          </td>
+        </tr>                        
+      </tfoot>
+    </table>
+  </form>
+
+  <script type="text/template" id="userTemplate">
+    <tr class="{{userRecord}}" data-id="{{id}}">
+      <td><input type="text" class="user-input" name="name-{{id}}" value="{{firstName}}"></td>
+      <td><input type="text" class="user-input" name="surname-{{id}}" value="{{lastName}}"></td>
+      <td><input type="text" class="user-input" name="email-{{id}}" value="{{email}}"></td>
+      <td>
+        <button type="button" class="{{userAction}}" name="{{saveButton}}">Save</button>
+        <button type="button" class="{{userAction}}" name="{{deleteButton}}">Del</button>
+      </td>
+    </tr>    
+  </script>
+</body>
+</html>
