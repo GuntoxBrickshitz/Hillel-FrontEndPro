@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -12,17 +11,16 @@
 </head>
 
 <body>
-  <div id="taskList" class="list">    
-  </div>
-
-  <form id="addTaskForm">
-    <input type="text" id="inputTask">
-    <input type="submit" id="btnAddTask" value="ADD">    
+  <form id="stickerForm" class="sticker-form">   
   </form>
 
-  <script type="text/template" id="taskTemplate">
-    <div class="todo-item full-width">
-      {{text}}      
-      <span class="del-btn">DEL</span>
+  <script type="text/template" id="stickerTemplate">
+    <div class="{{classSheet}}" data-id="{{id}}">
+      <div class="{{classPanel}}">
+        <span class="{{classButton1}}">{{button1Label}}</span>
+        <span class="{{classButton2}}">{{button2Label}}</span>
+      </div>
+      <textarea class="{{classText}}" cols="{{textColumns}}" rows="{{textRows}}">{{textValue}}</textarea>
+    </div>
   </script>
 </body></html>
