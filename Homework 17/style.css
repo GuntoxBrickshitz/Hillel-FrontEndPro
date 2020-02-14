@@ -9,12 +9,6 @@
     margin: 10px;
 }
 
-/*
-.sticker-new * {
-    background-color: #BAFBAB;
-}
-*/
-
 .sticker-sheet {
     display: flex;
     flex-direction: column;
@@ -29,11 +23,6 @@
     background-color: #FFFFBF;
 }
 
-/*
-.sticker-sheet * {
-    background-color: #FFFFBF;
-}
-*/
 .sticker-panel {
     display: flex;
     flex-direction: row;
