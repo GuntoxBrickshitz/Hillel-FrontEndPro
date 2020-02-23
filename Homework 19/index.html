@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Homework # 17</title>    
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+  <form id="stickerForm" class="sticker-form">   
+  </form>
+
+  <script type="text/template" id="stickerTemplate">
+    <div class="{{classSheet}}" data-id="{{id}}">
+      <div class="{{classPanel}}">
+        <span class="{{classButton1}}">{{button1Label}}</span>
+        <span class="{{classButton2}}">{{button2Label}}</span>
+      </div>
+      <textarea class="{{classText}}" cols="{{textColumns}}" rows="{{textRows}}">{{textValue}}</textarea>
+    </div>
+  </script>
+</body></html>
