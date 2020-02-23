@@ -27,12 +27,28 @@ const ADD_STICKER = {
   type: STICKER_ADD
 }
 
-const stickerForm = document.querySelector('#stickerForm');
-const stickerTemplate = document.querySelector('#stickerTemplate').innerHTML;
+const $stickerForm = $('#stickerForm');
+const stickerTemplate = $('#stickerTemplate').html();
 
 let stickers = [];
 
-stickerForm.addEventListener('click', onSubmitStickerForm);
+$stickerForm.on('click', onSubmitStickerForm); // `.${CLASS_STICKER_BUTTON}`,
+
+const dialog = $("#dialog-form").dialog({
+  autoOpen: false,
+  height: 200,
+  width: 150,
+  modal: true,
+  buttons: {
+    Add: addSticker,
+  },
+  close: function() {
+  }
+});
+
+$( "#buttonAddSticker" ).button().on( "click", function() {
+  dialog.dialog( "open" );
+});
 
 start();
 
@@ -44,7 +60,7 @@ function onSubmitStickerForm(event) {
   switch (true) {
     case target.classList.contains(CLASS_STICKER_BUTTON):      
 
-      onClickButton(target, target.closest('.' + CLASS_STICKER_SHEET));
+      onClickStickerButton(target, target.closest('.' + CLASS_STICKER_SHEET));
       break;
   }
 }
@@ -57,7 +73,7 @@ function start() {
 function getStickers() {
   const listFromStorage = localStorage.getItem('stickers');
  
-  stickers = JSON.parse(listFromStorage) || [ADD_STICKER];
+  stickers = JSON.parse(listFromStorage) || [];
 }
 
 function showStickers() {
@@ -100,7 +116,7 @@ function makeStickerHtml(sticker) {
       .replace('{{textRows}}', TEXT_ROWS);
 }
 
-function onClickButton(button, stickerSheet) {
+function onClickStickerButton(button, stickerSheet) {
   const buttonClasses = button.classList;
   const stickerId = stickerSheet.dataset.id;
   const text = getText(stickerSheet);
@@ -149,11 +165,11 @@ function deleteSticker(stickerId) {
   showStickers();
 }
 
-function addSticker(text) {
+function addSticker(text) {  
   const timestamp = (new Date()).getTime().toString();
   const newSticker = {
     id: timestamp,
-    text: text,
+    text: text.toString(),
     type: STICKER_HOLD
   }
 
@@ -171,6 +187,8 @@ function saveSticker(stickerId, text) {
 }
 
 function saveStickersToStorage() {
+  console.log(stickers);
+
   const listToStorage = JSON.stringify(stickers);
   
   localStorage.setItem('stickers', listToStorage);

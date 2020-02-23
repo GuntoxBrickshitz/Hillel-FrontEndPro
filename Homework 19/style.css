@@ -40,3 +40,9 @@
 .sticker-button {
     margin: 10px;
 }
+
+.top-panel {
+    border-bottom-style: solid;
+    padding: 5 px;
+    line-height: 40px;  
+}
