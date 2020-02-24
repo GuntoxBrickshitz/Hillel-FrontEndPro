@@ -1,25 +1,22 @@
+.top-panel {
+    border-bottom-style: solid;
+    padding: 5 px;
+    line-height: 40px;  
+}
+
 .sticker-form {
     display: flex;
     flex-wrap: wrap;
-}
-
-.sticker-new {
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
 }
 
 .sticker-sheet {
     display: flex;
     flex-direction: column;
     margin: 10px;
+    background-color: #FFFFBF;
 }
 
-.add * {
-    background-color: #BAFBAB;
-}
-
-.hold * {
+.sticker-sheet * {
     background-color: #FFFFBF;
 }
 
@@ -29,20 +26,19 @@
     justify-content: space-between;
 }
 
+.drag-holder {
+    margin: 15px;
+}
+
+.sticker-button {
+    margin: 15px;
+}
+
 .text-field {
     border-top-style: hidden;
     border-right-style: hidden;
     border-left-style: hidden;
     border-bottom-style: hidden;
     resize: none;
-}
-
-.sticker-button {
-    margin: 10px;
-}
-
-.top-panel {
-    border-bottom-style: solid;
-    padding: 5 px;
-    line-height: 40px;  
+    margin: 15px;
 }
