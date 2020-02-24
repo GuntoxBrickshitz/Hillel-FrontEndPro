@@ -1,168 +1,143 @@
 'use strict';
 
-const STICKER_ADD = 'add';
-const STICKER_HOLD = 'hold';
 const CLASS_STICKER_SHEET = 'sticker-sheet';
 const CLASS_STICKER_PANEL = 'sticker-panel';
-const CLASS_TEXT = 'text-field';
+const CLASS_STICKER_TEXT = 'text-field';
 const TEXT_COLUMNS = 16;
 const TEXT_ROWS = 10;
 const CLASS_STICKER_BUTTON = 'sticker-button';
 
-const ADD_BUTTON = {
-  label: 'Add',
-  type: 'add'
-};
-const SAVE_BUTTON = {
-  label: 'Save',
-  type: 'save'
-};
 const DEL_BUTTON = {
+  className: 'sticker-button',
   label: 'X',
-  type: 'delete'
 };
-const ADD_STICKER = {
-  id: '0',
-  text: '',
-  type: STICKER_ADD
+const DRAGGABLE = {
+  className: 'drag-holder',
+  label: 'drag',
+};
+const DRAG_OPTIONS = {
+  handle: `.${DRAGGABLE.className}`,
+  // containment: 'parent'
 }
 
-const $stickerForm = $('#stickerForm');
+const $buttonAddSticker = $('#buttonAddSticker');
+const $dialogForm = $("#dialogForm");
+const $newStickerText = $("#newStickerText");
+const $stickerBoard = $('#stickerBoard');
 const stickerTemplate = $('#stickerTemplate').html();
 
-let stickers = [];
-
-$stickerForm.on('click', onSubmitStickerForm); // `.${CLASS_STICKER_BUTTON}`,
-
-const dialog = $("#dialog-form").dialog({
+const dialog = $dialogForm.dialog({
   autoOpen: false,
   height: 200,
   width: 150,
   modal: true,
   buttons: {
-    Add: addSticker,
+    Cancel: closeModal,
+    Add: onClickModalAddButton  
   },
-  close: function() {
-  }
+  // close: function() {}
 });
 
-$( "#buttonAddSticker" ).button().on( "click", function() {
-  dialog.dialog( "open" );
-});
+let stickers = [];
+
+$buttonAddSticker.on('click', onClickAddButton);
+$stickerBoard.on('click', `.${CLASS_STICKER_BUTTON}`, onClickStickerButton); // `.${CLASS_STICKER_BUTTON}`,
+$stickerBoard.focusout(onFocusoutSticker);
 
 start();
 
-function onSubmitStickerForm(event) {
-  const target = event.target;
+function onClickAddButton() {
+  openModal();
+}
+
+function onClickStickerButton(event) {
+  const $stickerSheet = $(event.target).closest(`.${CLASS_STICKER_SHEET}`);
+  const stickerId = $stickerSheet.data('id');  
 
   event.preventDefault();
+  deleteSticker(stickerId);
+}
+
+function onFocusoutSticker(event) {
+  const $element = $(event.target);
+  const pos = $element.offset();
 
   switch (true) {
-    case target.classList.contains(CLASS_STICKER_BUTTON):      
+    case $element.hasClass(CLASS_STICKER_TEXT): // CLASS_STICKER_SHEET
 
-      onClickStickerButton(target, target.closest('.' + CLASS_STICKER_SHEET));
-      break;
+      saveSticker(
+        $element.parent().data('id'),
+        $element.val(),
+        pos.top,
+        pos.left,
+      );
+    break;
   }
 }
 
+function onClickModalAddButton() {
+  const text = $newStickerText.val();
+
+  addSticker(text);
+}
+
 function start() {
-  getStickers();
+  getStickersFromStorage();
   showStickers();
 }
 
-function getStickers() {
+function openModal() {
+  dialog.dialog('open');
+}
+
+function closeModal() {
+  dialog.dialog('close');
+}
+
+function getStickersFromStorage() {
   const listFromStorage = localStorage.getItem('stickers');
  
   stickers = JSON.parse(listFromStorage) || [];
 }
 
 function showStickers() {
-  stickerForm.innerHTML = stickers.map(makeStickerHtml).join('\n');
+  stickers.forEach(addStickerElement);
+  $(`.${CLASS_STICKER_SHEET}`).draggable(DRAG_OPTIONS);
+}
+
+function addStickerElement(sticker) {
+  const $element = $(makeStickerHtml(sticker));
+
+  $stickerBoard.append($element);
+  $element.draggable(DRAG_OPTIONS);
+  $element.css({ position: 'absolute', top: `${sticker.posTop}px`, left: `${sticker.posLeft}px` });
 }
 
 function makeStickerHtml(sticker) {
-  let button1Class = '';
-  let button1Label = '';
-  let button2Class = '';
-  let button2Label = '';
-
-  switch (sticker.type) {
-    case 'add':
-      button1Class = CLASS_STICKER_BUTTON;
-      button1Label = '';
-      button2Class = CLASS_STICKER_BUTTON + ' ' + ADD_BUTTON.type;
-      button2Label = ADD_BUTTON.label;
-      break;
-
-    default:
-      button1Class = CLASS_STICKER_BUTTON + ' ' + SAVE_BUTTON.type;
-      button1Label = SAVE_BUTTON.label;
-      button2Class = CLASS_STICKER_BUTTON + ' ' + DEL_BUTTON.type;
-      button2Label = DEL_BUTTON.label;
-      break;
-  }
-
   return stickerTemplate
       .replace('{{id}}', sticker.id)
       .replace('{{textValue}}', sticker.text)
-      .replace('{{classSheet}}', CLASS_STICKER_SHEET + ' ' + sticker.type)
-      .replace('{{classPanel}}', CLASS_STICKER_PANEL)
-      .replace('{{classButton1}}', button1Class)
-      .replace('{{button1Label}}', button1Label)
-      .replace('{{classButton2}}', button2Class)
-      .replace('{{button2Label}}', button2Label)
-      .replace('{{classText}}', CLASS_TEXT)
+      .replace('{{stickerSheet}}', CLASS_STICKER_SHEET)
+      .replace('{{stickerPanel}}', CLASS_STICKER_PANEL)
+      .replace('{{draggable}}', DRAGGABLE.className)
+      .replace('{{draggableLabel}}', DRAGGABLE.label)
+      .replace('{{buttonDelSticker}}', DEL_BUTTON.className)
+      .replace('{{buttonDelLabel}}', DEL_BUTTON.label)
+      .replace('{{stickerText}}', CLASS_STICKER_TEXT)
       .replace('{{textColumns}}', TEXT_COLUMNS)
       .replace('{{textRows}}', TEXT_ROWS);
 }
 
-function onClickStickerButton(button, stickerSheet) {
-  const buttonClasses = button.classList;
-  const stickerId = stickerSheet.dataset.id;
-  const text = getText(stickerSheet);
-
-  switch (true) {
-    case buttonClasses.contains(DEL_BUTTON.type):
-      console.log('delete');
-      deleteSticker(stickerId);
-      break;
-  
-    case text === '':
-      console.log('empty value');
-      return;
-
-    case buttonClasses.contains(ADD_BUTTON.type):
-      console.log('add');
-      addSticker(text);
-      break;
-
-    case buttonClasses.contains(SAVE_BUTTON.type):
-      console.log('save');
-      saveSticker(stickerId, text);
-      break;
-  }
-}
-
-function getText(stickerSheet) {
-  let item;
-
-  for (let i = 0; i < stickerSheet.children.length; i++) {
-    item = stickerSheet.children[i];
-
-    if (item.classList.contains(CLASS_TEXT)) {
-      return item.value;
-    }
-  }
-
-  return '';
-}
-
 function deleteSticker(stickerId) {
-  const index = stickers.findIndex(item => item.id === stickerId);
+  const index = stickers.findIndex(item => item.id == stickerId);
+  const $stickerSheet = $stickerBoard.find(`[data-id=${stickerId}]`);
+
+  if (index == -1) { return; }
 
   stickers.splice(index, 1);
   saveStickersToStorage();
-  showStickers();
+
+  $stickerSheet.remove();
 }
 
 function addSticker(text) {  
@@ -170,25 +145,32 @@ function addSticker(text) {
   const newSticker = {
     id: timestamp,
     text: text.toString(),
-    type: STICKER_HOLD
+    posTop: 100,
+    posLeft: 50,
   }
 
   stickers.push(newSticker);
   saveStickersToStorage();
-  showStickers();
+
+  addStickerElement(newSticker);
+  closeModal();
 }
 
-function saveSticker(stickerId, text) {
-  const index = stickers.findIndex(item => item.id === stickerId);
+function saveSticker(stickerId, text, top = 100, left = 50) {
+  const index = stickers.findIndex(item => item.id == stickerId);
+
+  console.log(index, top, left);
+
+  if (index == -1) { return; }
 
   stickers[index].text = text;
+  stickers[index].posTop = top;
+  stickers[index].posLeft = left;
+
   saveStickersToStorage();
-  showStickers();
 }
 
 function saveStickersToStorage() {
-  console.log(stickers);
-
   const listToStorage = JSON.stringify(stickers);
   
   localStorage.setItem('stickers', listToStorage);
