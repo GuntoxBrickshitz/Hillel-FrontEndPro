@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Homework # 17</title>    
+    <title>Homework # 19</title>    
     <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" defer></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" defer></script>
@@ -17,22 +17,24 @@
     <button id="buttonAddSticker">ADD</button>
   </div>
 
-  <div id="dialog-form" title="Add sticker">    
+  <div id="dialogForm" title="Add sticker">    
     <form>
-      <textarea class="text-field" cols="16" rows="10"></textarea>
+      <textarea id="newStickerText" cols="16" rows="10"></textarea>
     </form>
   </div>
 
-  <form id="stickerForm" class="sticker-form">   
+  <form id="stickerBoard" class="sticker-form">   
   </form>
 
   <script type="text/template" id="stickerTemplate">
-    <div class="{{classSheet}}" data-id="{{id}}">
-      <div class="{{classPanel}}">
-        <span class="{{classButton1}}">{{button1Label}}</span>
-        <span class="{{classButton2}}">{{button2Label}}</span>
+    <div class="{{stickerSheet}}" data-id="{{id}}">
+      <div class="{{stickerPanel}}">
+        <span class="{{draggable}}">{{draggableLabel}}</span>
+        <span class="{{buttonDelSticker}}">{{buttonDelLabel}}</span>
       </div>
-      <textarea class="{{classText}}" cols="{{textColumns}}" rows="{{textRows}}">{{textValue}}</textarea>
+      <textarea class="{{stickerText}}" cols="{{textColumns}}" rows="{{textRows}}">{{textValue}}</textarea>
     </div>
   </script>
-</body></html>
+</body>
+
+</html>
