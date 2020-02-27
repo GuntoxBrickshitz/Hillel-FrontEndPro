@@ -1,0 +1,32 @@
+h1 {
+    color: green;
+}
+
+.table-footer {
+    text-align: center;
+}
+
+.user-input.invalid {
+    border-color: red;
+}
+
+/* .user-input {
+    outline: none;
+    width: 100%;
+} */
+
+input {
+    outline: none;
+    width: 100%;
+}
+
+td {
+    text-align: center;
+}
+
+label, input { display:block; }
+
+#dialog-form {
+    background-color: lightgrey;
+}
+

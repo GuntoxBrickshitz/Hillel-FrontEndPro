@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Homework # 20</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js" defer></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+  <div class="container u-full-width u-full-height">
+    <div class="row heading">
+        <button id="btnAddUser" class="button-primary">Add User</button>
+    </div>
+    <div id="field" class="field row u-full-height"></div>
+  </div>
+
+  <div id="dialog-form" title="Create new user">
+    <form id="addUserForm">
+        <fieldset>            
+            <label for="name">First Name</label>
+            <input type="text" name="name" id="name" value="" class="u-full-width"/>
+
+            <label for="surname">Last Name</label>
+            <input type="text" name="surname" id="surname" value="" class="u-full-width"/>
+            
+            <label for="phone">Phone Number</label>
+            <input type="text" name="phone" id="phone" value="" class="u-full-width"/>
+            
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" value="" class="u-full-width"/>
+                        
+            <label for="birth">Birth Date</label>
+            <input type="text" name="birth" id="birth" value="" class="u-full-width"/>
+        </fieldset>
+    </form>
+  </div>
+
+  <form id="usersForm">
+    <table class="full-width-container">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Phone Number</th>
+          <th>Email</th>
+          <th>Birth Date</th>
+          <th>Action</th>                              
+        </tr>
+      </thead>
+
+      <tbody id="usersList">
+      </tbody>
+    </table>
+  </form>
+
+  <script type="text/template" id="userTemplate">
+    <tr class="{{userRecordClass}}" data-id="{{id}}">
+      <td>{{name}}</td>
+      <td>{{surname}}</td>
+      <td>{{phone}}</td>
+      <td>{{email}}</td>
+      <td>{{birth}}</td>
+      <td>
+        <button type="button" class="{{editButtonClass}}" name="{{editButtonLabel}}">Edit</button>
+        <button type="button" class="{{deleteButtonClass}}" name="{{deleteButtonLabel}}">Del</button>
+      </td>
+    </tr>    
+  </script>
+</body>
+
+</html>
