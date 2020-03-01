@@ -1,0 +1,11 @@
+{
+  "name": "homework-21",
+  "version": "1.0.0",
+  "description": "Homework #21 for Hillel IT School",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
