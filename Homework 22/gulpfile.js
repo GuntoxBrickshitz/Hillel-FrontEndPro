@@ -3,6 +3,7 @@ const concat = require('gulp-concat');
 const babel = require('gulp-babel');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
+const inject = require('gulp-inject');
 const browserSync = require('browser-sync').create();
 
 const build = series(html, scripts, styles, vendorsJS);
@@ -29,9 +30,9 @@ function scripts() {
     console.log('...building scripts');
     return src('./src/**/*.js')
         .pipe(sourcemaps.init({loadMaps: true}))
-            .pipe(babel())        
-        .pipe(sourcemaps.write())
-        .pipe(concat('all.js'))
+            .pipe(babel())
+            .pipe(concat('all.js'))
+        .pipe(sourcemaps.write('.'))        
         .pipe(dest('./dist'));
 }
 
@@ -66,7 +67,7 @@ function reloadServer(done) {
 
 function vendorsJS() {
     return src(['./node_modules/jquery/dist/jquery.js'],
-        ['./node_modules/jquery-ui/dist/jquery.js'])
+        ['./node_modules/jquery-ui-dist/jquery-ui.js'])
         .pipe(concat('vendors.js'))
         .pipe(dest('./dist'));
 }
