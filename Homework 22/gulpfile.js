@@ -1,12 +1,28 @@
 const { series, src, dest, watch } = require('gulp');
 const concat = require('gulp-concat');
 const babel = require('gulp-babel');
+const minify = require('gulp-minify');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const inject = require('gulp-inject');
 const browserSync = require('browser-sync').create();
 
-const build = series(html, scripts, styles, vendorsJS);
+const source = src(
+    [        
+        './dist/all.js',
+        './dist/vendors.js'
+    ],
+    {
+        read: false
+    }
+);
+
+const vendorSrc = [
+    './node_modules/jquery/dist/jquery.js',
+    './node_modules/jquery-ui-dist/jquery-ui.js'
+];
+
+const build = series(html, scripts, styles, vendorsJS, injectSrc);
 
 module.exports = {
     default: defaultTask,
@@ -66,8 +82,23 @@ function reloadServer(done) {
 }
 
 function vendorsJS() {
-    return src(['./node_modules/jquery/dist/jquery.js'],
-        ['./node_modules/jquery-ui-dist/jquery-ui.js'])
+    return src(vendorSrc)
         .pipe(concat('vendors.js'))
+        .pipe(dest('./dist'));
+}
+
+function injectSrc() {
+    return src('./dist/index.html')
+        .pipe(
+            inject(source, {
+                relative: true,
+                transform: function(path) {
+                    if (path.endsWith('.js')) {
+                        return `<script src="${path}" defer></script>`;
+                    }
+                    return inject.transform(...arguments);
+                }
+            })
+        )
         .pipe(dest('./dist'));
 }

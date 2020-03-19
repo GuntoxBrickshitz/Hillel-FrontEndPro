@@ -1,3 +1,10 @@
-console.log('api.js');
+export const URL = '';
 
-const i = 1;
+export const PHOTOS_URL = 'https://jsonplaceholder.typicode.com/photos?_limit=30';
+
+export default {
+    getPhotos: () => {
+        return fetch(PHOTOS_URL)
+            .then(response => response.json());
+    }
+};
