@@ -7,22 +7,28 @@ const sourcemaps = require('gulp-sourcemaps');
 const inject = require('gulp-inject');
 const browserSync = require('browser-sync').create();
 
+const vendorJsSrc = [
+    './node_modules/jquery/dist/jquery.js',
+    './node_modules/lightbox2/dist/js/lightbox.js'
+];
+
+const vendorCssSrc = [
+    './node_modules/lightbox2/dist/css/lightbox.css'
+];
+
 const source = src(
-    [        
+    [
+        './dist/vendors-min.js',
         './dist/all.js',
-        './dist/vendors.js'
+        './dist/vendors.css',
+        './dist/styles.css'
     ],
     {
         read: false
     }
 );
 
-const vendorSrc = [
-    './node_modules/jquery/dist/jquery.js',
-    './node_modules/jquery-ui-dist/jquery-ui.js'
-];
-
-const build = series(html, scripts, styles, vendorsJS, injectSrc);
+const build = series(html, scripts, styles, vendorsJS, vendorsCSS, injectSrc);
 
 module.exports = {
     default: defaultTask,
@@ -82,8 +88,16 @@ function reloadServer(done) {
 }
 
 function vendorsJS() {
-    return src(vendorSrc)
+    return src(vendorJsSrc)
         .pipe(concat('vendors.js'))
+        .pipe(minify())
+        .pipe(dest('./dist'));
+}
+
+function vendorsCSS() {
+    return src(vendorCssSrc)
+        .pipe(concat('vendors.css'))
+        .pipe(minify())
         .pipe(dest('./dist'));
 }
 

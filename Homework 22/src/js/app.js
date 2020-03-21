@@ -1,29 +1,24 @@
 $(() => {
-    const imageTemplate = $('#imageTemplate').html();
+    const photoTemplate = $('#photoTemplate').html();
     const $gallery = $('#gallery');
 
-    API.getPhotos().then(setGallery);
+    API
+        .getPhotos()
+        .then(setGallery);
 
-    function setGallery(imagesArray) {
-        renderImages(imagesArray);
-
-        initGallery();
+    function setGallery(photos) {
+        renderPhotos(photos);
     }
 
-    function renderImages(images) {
-        $gallery.html(images.map(getImageHtml).join('\n'));
+    function renderPhotos(photos) {
+        $gallery.html(photos.map(getImageHtml).join('\n'));
     }
 
-    function getImageHtml(image) {
-        return imageTemplate
-            .replace('{{imageUrl}}', image.url)
-            .replace('{{imageThumbnailUrl}}', image.thumbnailUrl)
-            .replace('{{imageTitle}}', image.title);
-    }
-
-    function initGallery() {
-        $gallery.find('a').simpleLightbox({
-            fileExt: false
-        });
+    function getImageHtml(photo) {
+        return photoTemplate
+            .replace('{{photoId}}', photo.id)
+            .replace('{{photoUrl}}', photo.url)
+            .replace('{{photoThumbnailUrl}}', photo.thumbnailUrl)
+            .replace('{{photoTitle}}', photo.title);
     }
 });

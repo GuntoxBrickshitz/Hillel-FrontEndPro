@@ -1,8 +1,7 @@
-export const URL = '';
+const URL = '';
+const PHOTOS_URL = 'https://jsonplaceholder.typicode.com/photos?_limit=30';
 
-export const PHOTOS_URL = 'https://jsonplaceholder.typicode.com/photos?_limit=30';
-
-export default {
+const API = {
     getPhotos: () => {
         return fetch(PHOTOS_URL)
             .then(response => response.json());
