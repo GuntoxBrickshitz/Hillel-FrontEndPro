@@ -9,11 +9,12 @@ const browserSync = require('browser-sync').create();
 
 const vendorJsSrc = [
     './node_modules/jquery/dist/jquery.js',
-    './node_modules/lightbox2/dist/js/lightbox.js'
+    './node_modules/jquery-simplegallery/js/jquery.gallery.js'    
 ];
 
 const vendorCssSrc = [
-    './node_modules/lightbox2/dist/css/lightbox.css'
+    './node_modules/jquery-simplegallery/css/jquery.gallery.css',
+    './node_modules/jquery-simplegallery/css/font-awesome.css'    
 ];
 
 const source = src(

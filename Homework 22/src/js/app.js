@@ -8,6 +8,7 @@ $(() => {
 
     function setGallery(photos) {
         renderPhotos(photos);
+        createGallery();
     }
 
     function renderPhotos(photos) {
@@ -20,5 +21,9 @@ $(() => {
             .replace('{{photoUrl}}', photo.url)
             .replace('{{photoThumbnailUrl}}', photo.thumbnailUrl)
             .replace('{{photoTitle}}', photo.title);
+    }
+
+    function createGallery() {
+        $gallery.createSimpleImgGallery();
     }
 });

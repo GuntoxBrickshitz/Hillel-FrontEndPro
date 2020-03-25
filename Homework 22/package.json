@@ -20,8 +20,8 @@
     "gulp-minify": "^3.1.0",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
-    "jquery-ui-dist": "^1.12.1",
-    "lightbox2": "^2.11.1"
+    "jquery-simplegallery": "0.0.3",
+    "jquery-ui-dist": "^1.12.1"
   },
   "dependencies": {
     "jquery": "^3.4.1"
