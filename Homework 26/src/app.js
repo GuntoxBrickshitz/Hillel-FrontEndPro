@@ -1,17 +1,15 @@
 import './styles.css';
-const MOVE_STEP = 20;
 
-const balls = {};
+const messages = {};
 
-const ball = {
-    id: Math.random(),
-    name: 'Alex',
-    color: 'green',
-    top: 50,
-    left: 50
+const message = {
+    id: Date.now(),
+    author: 'Andrew',
+    text: 'wuzzap',
 };
+
 const ws = new WebSocket('wss://fep-app.herokuapp.com/');
-document.addEventListener('keydown', onKeyPress);
+//document.addEventListener('keydown', onKeyPress);
 
 ws.onopen = onSocketOpen;
 ws.onmessage = onSocketMessage;
@@ -22,68 +20,68 @@ function onSocketMessage(message) {
     const packetData = JSON.parse(message.data);
 
     console.log(packetData);
-    if (!balls[packetData.payload.id]) {
-        balls[packetData.payload.id] = createBallElement(packetData.payload);
+    if (!messages[packetData.payload.id]) {
+        messages[packetData.payload.id] = createMessageElement(packetData.payload);
     }
 
-    updateState(packetData.payload);
+    //updateState(packetData.payload);
 
-    console.log('balls', balls);
+    console.log('messages', messages);
 }
 
 function onSocketOpen() {
     console.log('socket open');
-    notifyStateChange();
+    // notifyStateChange();
 }
 
 function notifyStateChange() {
     ws.send(
         JSON.stringify({
-            action: 'setState',
-            payload: ball
+            action: 'message',
+            payload: message
         })
     );
 }
 
-function createBallElement(ball) {
+function createMessageElement(message) {
     const el = document.createElement('div');
 
-    el.className = 'ball';
-    el.textContent = ball.name;
+    el.className = 'message';
+    el.textContent = message.name;
 
     document.body.append(el);
 
     return el;
 }
 
-function updateState(ball) {
-    const ballEl = balls[ball.id];
-    ballEl.style.top = ball.top + 'px';
-    ballEl.style.left = ball.left + 'px';
-    ballEl.style.backgroundColor = ball.color;
+function updateState(message) {
+    const messageEl = messages[message.id];
+    messageEl.style.top = message.top + 'px';
+    messageEl.style.left = message.left + 'px';
+    messageEl.style.backgroundColor = message.color;
 }
 
 function onKeyPress(e) {
     switch (e.code) {
         case 'ArrowUp':
-            changeBallPosition(-MOVE_STEP, 0);
+            changemessagePosition(-MOVE_STEP, 0);
             break;
         case 'ArrowLeft':
-            changeBallPosition(0, -MOVE_STEP);
+            changemessagePosition(0, -MOVE_STEP);
             break;
         case 'ArrowDown':
-            changeBallPosition(MOVE_STEP, 0);
+            changemessagePosition(MOVE_STEP, 0);
             break;
         case 'ArrowRight':
-            changeBallPosition(0, MOVE_STEP);
+            changemessagePosition(0, MOVE_STEP);
             break;
     }
     notifyStateChange();
 }
 
-function changeBallPosition(topDiff, leftDiff) {
-    ball.top += topDiff;
-    ball.left += leftDiff;
+function changemessagePosition(topDiff, leftDiff) {
+    message.top += topDiff;
+    message.left += leftDiff;
 }
 
 // {

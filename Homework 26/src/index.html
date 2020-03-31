@@ -5,5 +5,29 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
     </head>
-    <body></body>
+
+    <body>
+        <div id="chat" class="chat">            
+            <div id="messages" class="messages">
+            </div>
+
+            <form id="sendMessageForm" class="message-form">
+                <input
+                    type="text"
+                    name="author"
+                    id="authorInput"
+                    class="form-input"
+                />
+                <input
+                    type="text"
+                    name="message"
+                    id="messageInput"
+                    class="form-input"
+                />            
+                <button id="saveUserBtn">
+                    Send
+                </button>
+            </form>
+        </div>
+    </body>
 </html>
