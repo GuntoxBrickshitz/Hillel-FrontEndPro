@@ -1,32 +1,35 @@
 import './styles.css';
+import { messageTemplate } from './templates.js';
 
-const messages = {};
-
-const message = {
-    id: Date.now(),
-    author: 'Andrew',
-    text: 'wuzzap',
-};
+const CLASS_MESSAGE_ITEM = 'message-item';
+const inputs = document.querySelectorAll('.form-input');
+const messageList = document.querySelector('#messageList');
+const formSendMessage = document.querySelector('#formSendMessage');
 
 const ws = new WebSocket('wss://fep-app.herokuapp.com/');
-//document.addEventListener('keydown', onKeyPress);
 
 ws.onopen = onSocketOpen;
 ws.onmessage = onSocketMessage;
 
-function onSocketMessage(message) {
-    console.log(message);
+formSendMessage.addEventListener('submit', onSubmitSendForm);
 
-    const packetData = JSON.parse(message.data);
+function onSubmitSendForm(event) {
+    const inputMessage = messageFromInput();
+    
+    event.preventDefault();
+    notifyStateChange(inputMessage);
+}
 
-    console.log(packetData);
-    if (!messages[packetData.payload.id]) {
-        messages[packetData.payload.id] = createMessageElement(packetData.payload);
+function onSocketMessage(wsMessage) {
+    const packetData = JSON.parse(wsMessage.data);    
+    const message = packetData.payload;
+
+    if (!message || !message.author || !message.message) {
+        return;
     }
 
-    //updateState(packetData.payload);
-
-    console.log('messages', messages);
+    addMessageElement(message);
+    scrollBottom();
 }
 
 function onSocketOpen() {
@@ -34,7 +37,7 @@ function onSocketOpen() {
     // notifyStateChange();
 }
 
-function notifyStateChange() {
+function notifyStateChange(message) {
     ws.send(
         JSON.stringify({
             action: 'message',
@@ -43,60 +46,28 @@ function notifyStateChange() {
     );
 }
 
-function createMessageElement(message) {
+function messageFromInput() {
+    return {
+        author: inputs[0].value,
+        message: inputs[1].value
+    }
+}
+
+function addMessageElement(message) {
     const el = document.createElement('div');
 
-    el.className = 'message';
-    el.textContent = message.name;
+    el.className = CLASS_MESSAGE_ITEM;
+    el.innerHTML = makeMessageHtml(message);
 
-    document.body.append(el);
-
-    return el;
+    messageList.append(el);
 }
 
-function updateState(message) {
-    const messageEl = messages[message.id];
-    messageEl.style.top = message.top + 'px';
-    messageEl.style.left = message.left + 'px';
-    messageEl.style.backgroundColor = message.color;
+function makeMessageHtml(message) {
+    return messageTemplate
+        .replace('{{author}}', message.author)
+        .replace('{{text}}', message.message);
 }
 
-function onKeyPress(e) {
-    switch (e.code) {
-        case 'ArrowUp':
-            changemessagePosition(-MOVE_STEP, 0);
-            break;
-        case 'ArrowLeft':
-            changemessagePosition(0, -MOVE_STEP);
-            break;
-        case 'ArrowDown':
-            changemessagePosition(MOVE_STEP, 0);
-            break;
-        case 'ArrowRight':
-            changemessagePosition(0, MOVE_STEP);
-            break;
-    }
-    notifyStateChange();
+function scrollBottom() {
+    messageList.scrollTop = messageList.scrollHeight;
 }
-
-function changemessagePosition(topDiff, leftDiff) {
-    message.top += topDiff;
-    message.left += leftDiff;
-}
-
-// {
-//     action: 'setState',
-//     payload: {}
-// },
-// {
-//     action: 'move',
-//     payload: {top, left}
-// }
-
-// {
-//     action: 'message',
-//     payload: {
-//         author: 'Alex',
-//         message: 'Hello world'
-//     }
-// }

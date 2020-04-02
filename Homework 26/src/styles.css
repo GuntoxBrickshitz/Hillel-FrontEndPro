@@ -1,10 +1,37 @@
-.ball {
-    background-color: red;
-    border-radius: 50%;
-    height: 100px;
-    width: 100px;
-    position: absolute;
-    top: 50px;
-    left: 50px;
-    padding: 20px;
+.chat {
+    border-style: solid;
+    border-width: 1px;    
+    width: 75%;
+    margin: auto;
+}
+
+.message-list {
+    overflow-y: auto;
+    border-style: solid;    
+    border-width: 1px; 
+    height: 400px;
+}
+
+.message-author {
+    font-weight: bold;
+}
+
+.message-text {
+    font-style: italic;
+}
+
+.form-message {
+    display: flex;
+}
+
+.input-author {
+    flex: 1;
+}
+
+.input-message {
+    flex: 4;
+}
+
+.button-send {
+    flex: 1;
 }
