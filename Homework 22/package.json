@@ -24,6 +24,6 @@
     "jquery-ui-dist": "^1.12.1"
   },
   "dependencies": {
-    "jquery": "^3.4.1"
+    "jquery": "^3.5.0"
   }
 }
